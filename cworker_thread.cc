@@ -2,6 +2,7 @@
 #include "cthread_pool.h"
 #include "cjob.h"
 #include "pthread.h"
+#include"debug.h"
 
 cworker_thread::cworker_thread()
 {

@@ -1,5 +1,6 @@
 #include"cthread.h"
 #include"pthread.h"
+#include"debug.h"
 
 cthread::cthread()
 {

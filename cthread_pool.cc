@@ -4,6 +4,7 @@
 #include<assert.h>
 #include<stdio.h>
 #include<algorithm>
+#include"debug.h"
 
 cthread_pool::cthread_pool()
 {
