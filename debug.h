@@ -10,7 +10,6 @@
 #define __DEBUG_H__
 
 #include <stdio.h>
-#include "date_time.h"
 
 #if defined(DEBUG)
 #define INFO(format, ...) fprintf(stdout, "[INFO]"format,##__VA_ARGS__)
@@ -24,5 +23,5 @@
 #define TERROR(format, ...)
 #endif
 
-#define _XDBG printf("_%s__%d_\n",__func__,__LINE__)
+#define _XDBG  printf("tid=%llu _ %s -- %d \n",pthread_self(),__func__,__LINE__)
 #endif // __DEBUG_H__

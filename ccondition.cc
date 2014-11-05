@@ -1,46 +1,75 @@
 #include"ccondition.h"
+#include"debug.h"
+#include<iostream>
 
-ccondition::ccondition():m_cond(PTHREAD_COND_INITIALIZER)
+ccondition::ccondition(cthread_mutex *p_mutex_lock):m_mutex_lock(p_mutex_lock)
 {
-
+    std::cout<<"ccondition::m_mutex_lock address="<<m_mutex_lock<<"\n"<<std::endl;
+    std::cout<<"ccondition::m_mutex_lock->m_mutex address="<<&m_mutex_lock->m_mutex <<"\n"<<std::endl;
+    pthread_cond_init(&m_cond,NULL);
 }
 
-ccondition::ccondition(pthread_cond_t cond)
+ccondition::ccondition():m_mutex_lock(NULL)
 {
-    m_cond = cond;
+    
+    pthread_cond_init(&m_cond,NULL);
 }
+
 
 ccondition::~ccondition()
 {
     pthread_cond_destroy(&m_cond);
 }
-
-int ccondition::init(pthread_condattr_t * attr)
-{
-    return pthread_cond_init(&m_cond,attr);
-}
-
+/*
+ *
+ *int ccondition::init(pthread_condattr_t * attr)
+ *{
+ *    _XDBG;
+ *    return pthread_cond_init(&m_cond,attr);
+ *}
+ *
+ */
 int ccondition::destroy()
 {
     return pthread_cond_destroy(&m_cond);
 }
 
-int ccondition::wait(cthread_mutex & mutex)
+int ccondition::wait()
 {
-    return pthread_cond_wait(&m_cond,&mutex.m_mutex);
+    _XDBG;
+    std::cout<<"pthread_self()="<<pthread_self()<<"\n"<<std::endl;
+    std::cout<<"wait::   ... ccondition::m_mutex_lock address="<<m_mutex_lock<<"\n"<<std::endl;
+    std::cout<<"wait::   ... ccondition::m_mutex_lock->m_mutex address="<<&m_mutex_lock->m_mutex <<"\n"<<std::endl;
+    int ret =pthread_cond_wait(&m_cond,&m_mutex_lock->m_mutex);
+    _XDBG;
+    if( ret == 0 )
+        printf("pthread_cond_wait success!!!\n");
+    else
+        printf("pthread_cond_wait failed!!!\n");
+    return ret;
 }
 
-int ccondition::timedwait(cthread_mutex &mutex,const struct timespec * timeout)
+int ccondition::timedwait(const struct timespec * timeout)
 {
-    return pthread_cond_timedwait(&m_cond,&mutex.m_mutex,timeout);
+    return pthread_cond_timedwait(&m_cond,&m_mutex_lock->m_mutex ,timeout);
 }
 
-int ccondition::signal()
+int ccondition::notify()
 {
-    return pthread_cond_signal(&m_cond);
+    _XDBG;
+    std::cout<<"pthread_self()="<<pthread_self()<<"\n"<<std::endl;
+    std::cout<<"notify::   ... ccondition::m_mutex_lock address="<<m_mutex_lock<<"\n"<<std::endl;
+    std::cout<<"notify::   ... ccondition::m_mutex_lock->m_mutex address="<<&m_mutex_lock->m_mutex <<"\n"<<std::endl;
+    int ret =pthread_cond_signal(&m_cond);
+    if( ret == 0 )
+        printf("pthread_cond_signal success!!!\n");
+    else
+        printf("pthread_cond_signal failed!!!\n");
+    _XDBG;
+    return ret;
 }
 
-int ccondition::broadcast()
+int ccondition::notify_all()
 {
     return pthread_cond_broadcast(&m_cond);
 }

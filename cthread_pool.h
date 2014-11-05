@@ -26,14 +26,14 @@ class cthread_pool
         void delete_idle_thread(int num);//删除一定数量的空闲线程
         void create_idle_thread(int num);//创建一定数量的空闲线程
     public:
-        cthread_mutex m_busymutex;//
-        cthread_mutex m_idlemutex;//
-        cthread_mutex m_jobmutex;//
-        cthread_mutex m_varmutex;//
-        ccondition m_busycond;//
-        ccondition m_idlecond;//
-        ccondition m_idlejobcond;//
-        ccondition m_maxnumcond;//
+        mutable cthread_mutex m_busymutex;//
+        mutable cthread_mutex m_idlemutex;//
+        mutable cthread_mutex m_jobmutex;//
+        mutable cthread_mutex m_varmutex;//
+        mutable ccondition m_busycond;//
+        mutable ccondition m_idlecond;//
+        mutable ccondition m_idlejobcond;//
+        mutable ccondition m_maxnumcond;//
     public:
         vector< cworker_thread *> m_threadlist;//
         vector< cworker_thread *> m_busylist;//空闲链表

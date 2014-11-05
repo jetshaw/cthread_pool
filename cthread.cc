@@ -1,8 +1,8 @@
 #include"cthread.h"
 #include"pthread.h"
 #include"debug.h"
-
-cthread::cthread()
+#include<iostream>
+cthread::cthread():m_thread_id(0)
 {
     m_detach = false;
     m_create_suspended = false;
@@ -28,12 +28,11 @@ bool cthread::terminate(void)
 
 bool cthread::start(void)
 {
-    thread_function(NULL);
-}
-
-void *cthread::thread_function(void* data)
-{
-    run();
+    std::cout<<"\ncthread::start\n"<<std::endl;
+    _XDBG;
+    pthread_create(&m_thread_id,NULL,cthread::thread_func,this);
+    _XDBG;
+    std::cout<<"after pthread_create\n"<<std::endl;
 }
 
 void cthread::exit()
@@ -44,6 +43,14 @@ void cthread::exit()
 bool cthread::wake_up()
 {
 
+}
+
+void *cthread::thread_func(void *arg)
+{
+    cthread* p_thread = static_cast<cthread*>(arg);
+    _XDBG;
+    p_thread->run();
+    _XDBG;
 }
 
 bool cthread::set_priority(int priority)

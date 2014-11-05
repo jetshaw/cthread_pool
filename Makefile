@@ -1,6 +1,6 @@
 CC = g++
 LD = g++ 
-CFLAGS=
+CFLAGS= -g
 LDFLAGS= -lpthread
 TARGET=pooltest
 SRCS =  cthread_pool.cc ccondition.cc cthread_mutex.cc cthread.cc cthread_manage.cc cjob.cc cworker_thread.cc

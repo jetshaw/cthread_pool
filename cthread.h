@@ -2,6 +2,8 @@
 #define _CTHREAD_H_______
 #include<pthread.h>
 #include<string.h>
+#include<stdexcept>
+
 enum threadstate{
     THREAD_IDLE,
     THREAD_RUNNING,
@@ -21,7 +23,7 @@ class cthread
         threadstate m_thread_state;//线程状态,分为四种：空闲，忙碌，挂起（暂停，Linux线程库不支持挂起操作），终止（包括正常退出和非正常退出），
     protected:
         void set_errcode(int errcode){m_errcode=errcode;}
-        void* thread_function(void *);//线程函数，它将被start调用，它自己调用run函数
+        static void* thread_func(void *);//线程函数，
     public:
         cthread();
         cthread(bool createsuspended,bool detach);

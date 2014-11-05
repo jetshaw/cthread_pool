@@ -14,14 +14,14 @@ class cworker_thread : public cthread
         cthread_pool* m_thread_pool;
         cjob* m_job;
         void* m_jobdata;
-        cthread_mutex m_varmutex;
+        cthread_mutex *m_varmutex;
         bool m_is_end;
     protected:
 
     public:
-        ccondition m_jobcond;
-        cthread_mutex m_work_mutex;
-        cworker_thread();
+        cthread_mutex *m_work_mutex;
+        ccondition *m_jobcond;
+        cworker_thread(cthread_mutex* var_lock,cthread_mutex* work_lock,ccondition* job_cond);
         virtual ~cworker_thread();
         void set_job(cjob* job,void*jobdata);
         cjob* get_job(void){return m_job;}

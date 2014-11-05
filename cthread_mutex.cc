@@ -1,12 +1,12 @@
 #include"cthread_mutex.h"
+#include"debug.h"
+#include<iostream>
 
-cthread_mutex::cthread_mutex():m_mutex(PTHREAD_MUTEX_INITIALIZER)
+cthread_mutex::cthread_mutex()
 {
-}
-
-cthread_mutex::cthread_mutex(pthread_mutex_t mutex)
-{
-    m_mutex = mutex;
+    std::cout<<"cthread_mutex::cthread_mutex()\n"<<std::endl;
+    pthread_mutex_init(&m_mutex,NULL);
+    _XDBG;
 }
 
 cthread_mutex::~cthread_mutex()
@@ -16,6 +16,7 @@ cthread_mutex::~cthread_mutex()
 
 int cthread_mutex::init(const pthread_mutexattr_t * attr)
 {
+    _XDBG;
     return pthread_mutex_init(&m_mutex,attr);
 }
 

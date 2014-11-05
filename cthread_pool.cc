@@ -6,7 +6,7 @@
 #include<algorithm>
 #include"debug.h"
 
-cthread_pool::cthread_pool()
+cthread_pool::cthread_pool():m_busymutex(),m_idlemutex(),m_jobmutex(),m_varmutex(),m_busycond(&m_busymutex),m_idlecond(&m_idlemutex),m_idlejobcond(&m_jobmutex),m_maxnumcond(&m_varmutex)
 {
     m_maxnum = 50;
     m_availlow = 5;
@@ -14,18 +14,24 @@ cthread_pool::cthread_pool()
     m_availhigh = 20;
     m_busylist.clear();
     m_idlelist.clear();
-    int i;
+        int i;
     for(i=0;i<m_initnum;i++)
     {
-        cworker_thread* thr = new cworker_thread();
+    _XDBG;
+        std::cout<<"**********new cworker_thread*****************\n"<<std::endl;
+        cworker_thread* thr = new cworker_thread(&m_varmutex,&m_jobmutex,&m_idlecond);
+    _XDBG;
         thr->set_thread_pool(this);
         appendto_idle_list(thr);
+    _XDBG;
         thr->start();
+    _XDBG;
     }
 }
 
-cthread_pool::cthread_pool(int initnum)
+cthread_pool::cthread_pool(int initnum):m_busymutex(),m_idlemutex(),m_jobmutex(),m_varmutex(),m_busycond(&m_busymutex),m_idlecond(&m_idlemutex),m_idlejobcond(&m_jobmutex),m_maxnumcond(&m_varmutex)
 {
+    _XDBG;
     assert(initnum>0&&initnum<=30);
     m_maxnum = 30;
     m_availlow = initnum-10>0?initnum-10:3;
@@ -37,10 +43,15 @@ cthread_pool::cthread_pool(int initnum)
     int i;
     for(i=0;i<m_initnum;i++)
     {
-        cworker_thread* thr = new cworker_thread();
+    _XDBG;
+        std::cout<<"**********new cworker_thread*****************\n"<<std::endl;
+        cworker_thread* thr = new cworker_thread(&m_varmutex,&m_jobmutex,&m_idlecond);
+    _XDBG;
         appendto_idle_list(thr);
         thr->set_thread_pool(this);
+    _XDBG;
         thr->start();
+    _XDBG;
     }
 }
 
@@ -52,7 +63,7 @@ cthread_pool::~cthread_pool()
 cworker_thread * cthread_pool::get_idle_thread(void)
 {
     while(m_idlelist.size()==0)
-        m_idlecond.wait(m_idlemutex);
+        m_idlecond.wait();
     m_idlemutex.lock();
     if(m_idlelist.size()>0)
     {
@@ -100,8 +111,8 @@ void cthread_pool::moveto_idle_list(cworker_thread* busythread)
     if(pos != m_busylist.end())
         m_busylist.erase(pos);
     m_busymutex.unlock();
-    m_idlecond.signal();
-    m_maxnumcond.signal();
+    m_idlecond.notify();
+    m_maxnumcond.notify();
 }
 
 void cthread_pool::delete_idle_thread(int num)
@@ -134,7 +145,7 @@ void cthread_pool::create_idle_thread(int num)
     int i;
     for(i=0;i<num;i++)
     {
-        cworker_thread* thr = new cworker_thread();
+        cworker_thread* thr = new cworker_thread(&m_varmutex,&m_jobmutex,&m_idlecond);
         thr->set_thread_pool(this);
         appendto_idle_list(thr);
         m_varmutex.lock();
@@ -160,9 +171,12 @@ void cthread_pool::run(cjob* job,void* jobdata)
     std::cout<<"\ncthread_pool::run\n"<<std::endl;
     assert(job != NULL);
     if(get_busy_num()==m_maxnum)
-        m_maxnumcond.wait(m_busymutex);
+        m_maxnumcond.wait();
+        _XDBG; 
     if(m_idlelist.size()<m_availlow)
     {
+        _XDBG;
+        std::cout<<"又要创建线程\n"<<std::endl;
         if( get_all_num()+m_initnum-m_idlelist.size()<m_maxnum)
             create_idle_thread(m_initnum-m_idlelist.size());
         else
@@ -171,12 +185,17 @@ void cthread_pool::run(cjob* job,void* jobdata)
     cworker_thread* idlethr = get_idle_thread();
     if( idlethr != NULL)
     {
-        idlethr->m_work_mutex.lock();
+        idlethr->m_work_mutex->lock();
+        _XDBG; 
         moveto_busy_list(idlethr);
+        _XDBG; 
         idlethr->set_thread_pool(this);
+        _XDBG; 
         job->set_work_thread(idlethr);
         std::cout<<"jobisset to thread "<<idlethr->get_thread_id()<<"\n"<<std::endl;
+        _XDBG; 
         idlethr->set_job(job,jobdata);
+        _XDBG; 
     }
     std::cout<<"\ncthread_pool::run leave now\n"<<std::endl;
 }
