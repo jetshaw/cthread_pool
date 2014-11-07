@@ -6,7 +6,7 @@ class cthread_pool;
 //线程池管理器,用于创建并管理线程池
 class cthread_manage
 {
-    private:
+    public:
         cthread_pool* m_pool;//线程池
         int m_num_of_thread;//初始创建时允许创建的并发的线程数量
     protected:

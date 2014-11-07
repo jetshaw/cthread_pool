@@ -20,7 +20,7 @@ cthread_manage::cthread_manage(int num)
     m_num_of_thread = num;
     m_pool = new cthread_pool(m_num_of_thread);
     _XDBG;
-    std::cout<<"after cthread_manage::cthread_manage ...\n"<<std::endl;
+    //std::cout<<"after cthread_manage::cthread_manage ...\n"<<std::endl;
 }
 
 cthread_manage::~cthread_manage()
@@ -31,7 +31,7 @@ cthread_manage::~cthread_manage()
 
 void cthread_manage::run(cjob* job,void* jobdata)
 {
-    std::cout<<"\ncthread_manage::run\n"<<std::endl;
+    //std::cout<<"\ncthread_manage::run\n"<<std::endl;
     _XDBG;
     m_pool->run(job,jobdata);
     _XDBG;
@@ -60,7 +60,7 @@ class cxjob:public cjob
         ~cxjob(){}
         void run(void* jobdata)
         {
-            printf("the job comes from cxjob\n");
+            printf("\n.................pthread_id=%lu the job comes from cxjob.............\n",pthread_self());
             sleep(2);
         }
 };
@@ -72,18 +72,20 @@ class cyjob:public cjob
         ~cyjob(){}
         void run(void* jobdata)
         {
-            printf("the job comes from cyjob\n");
+            printf("\n.................pthread_id=%lu the job comes from cyjob.............\n",pthread_self());
         }
 };
 
 
 
+cthread_manage* manage; 
 int main(int argc,char** argv)
 {
-    cthread_manage* manage = new cthread_manage(10);
     int i;
+    manage = new cthread_manage(10);
+    printf(" 1: idle_nums=%d busy_nums=%d total=%d\n",manage->m_pool->m_idlelist.size(),manage->m_pool->m_busylist.size(),manage->m_pool->get_all_num());
     std::cout<<"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n"<<std::endl;
-    for(i=0;i<4;i++)
+    for(i=0;i<44;i++)
     {
         std::cout<<"\nin main for i="<<i<<std::endl;
         cxjob* job = new cxjob();
@@ -93,10 +95,12 @@ int main(int argc,char** argv)
     sleep(2);
     cyjob* job = new cyjob();
     manage->run(job,NULL);
-    std::cout<<"after manage->run(job,NULL)\n"<<std::endl;
+    //std::cout<<"after manage->run(job,NULL)\n"<<std::endl;
     std::cout<<"##########################################################################################\n"<<std::endl;
+    printf("2: idle_nums=%d busy_nums=%d total=%d\n",manage->m_pool->m_idlelist.size(),manage->m_pool->m_busylist.size(),manage->m_pool->get_all_num());
     manage->terminate_all();
     std::cout<<"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n"<<std::endl;
+    printf("3: idle_nums=%d busy_nums=%d total=%d\n",manage->m_pool->m_idlelist.size(),manage->m_pool->m_busylist.size(),manage->m_pool->get_all_num());
     return 0;
 }
 

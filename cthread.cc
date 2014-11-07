@@ -28,11 +28,11 @@ bool cthread::terminate(void)
 
 bool cthread::start(void)
 {
-    std::cout<<"\ncthread::start\n"<<std::endl;
+    //std::cout<<"\ncthread::start\n"<<std::endl;
     _XDBG;
     pthread_create(&m_thread_id,NULL,cthread::thread_func,this);
     _XDBG;
-    std::cout<<"after pthread_create\n"<<std::endl;
+    //std::cout<<"after pthread_create\n"<<std::endl;
 }
 
 void cthread::exit()

@@ -4,7 +4,7 @@
 
 cthread_mutex::cthread_mutex()
 {
-    std::cout<<"cthread_mutex::cthread_mutex()\n"<<std::endl;
+    //std::cout<<"cthread_mutex::cthread_mutex()\n"<<std::endl;
     pthread_mutex_init(&m_mutex,NULL);
     _XDBG;
 }
@@ -27,7 +27,9 @@ int cthread_mutex::destroy()
 
 int cthread_mutex::lock()
 {
+    printf("pthread_ip=%lu mutex_addr=%p lock...\n",pthread_self(),&m_mutex);
     return pthread_mutex_lock(&m_mutex);
+    printf("pthread_ip=%lu mutex_addr=%p after ... lock...\n",pthread_self(),&m_mutex);
 }
 
 int cthread_mutex::trylock()

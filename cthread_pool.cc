@@ -8,6 +8,7 @@
 
 cthread_pool::cthread_pool():m_busymutex(),m_idlemutex(),m_jobmutex(),m_varmutex(),m_busycond(&m_busymutex),m_idlecond(&m_idlemutex),m_idlejobcond(&m_jobmutex),m_maxnumcond(&m_varmutex)
 {
+    printf("^^^^^^^^^^^^^^^^^^^^^^^^^^pthread_id=%lu m_busymutex_addr=%p m_idlemutex_addr=%p m_jobmutex_addr=%p m_varmutex_addr=%p ^^^^^^^^^^\n",pthread_self(),&m_busymutex,&m_idlemutex,&m_jobmutex,&m_varmutex);
     m_maxnum = 50;
     m_availlow = 5;
     m_initnum = m_availnum = 10;
@@ -18,8 +19,8 @@ cthread_pool::cthread_pool():m_busymutex(),m_idlemutex(),m_jobmutex(),m_varmutex
     for(i=0;i<m_initnum;i++)
     {
     _XDBG;
-        std::cout<<"**********new cworker_thread*****************\n"<<std::endl;
-        cworker_thread* thr = new cworker_thread(&m_varmutex,&m_jobmutex,&m_idlecond);
+        //std::cout<<"**********new cworker_thread*****************\n"<<std::endl;
+        cworker_thread* thr = new cworker_thread();
     _XDBG;
         thr->set_thread_pool(this);
         appendto_idle_list(thr);
@@ -31,6 +32,7 @@ cthread_pool::cthread_pool():m_busymutex(),m_idlemutex(),m_jobmutex(),m_varmutex
 
 cthread_pool::cthread_pool(int initnum):m_busymutex(),m_idlemutex(),m_jobmutex(),m_varmutex(),m_busycond(&m_busymutex),m_idlecond(&m_idlemutex),m_idlejobcond(&m_jobmutex),m_maxnumcond(&m_varmutex)
 {
+    printf("^^^^^^^^^^^^^^^^^^^^^^^^^^pthread_id=%lu m_busymutex_addr=%p m_idlemutex_addr=%p m_jobmutex_addr=%p m_varmutex_addr=%p ^^^^^^^^^^\n",pthread_self(),&m_busymutex,&m_idlemutex,&m_jobmutex,&m_varmutex);
     _XDBG;
     assert(initnum>0&&initnum<=30);
     m_maxnum = 30;
@@ -45,7 +47,7 @@ cthread_pool::cthread_pool(int initnum):m_busymutex(),m_idlemutex(),m_jobmutex()
     {
     _XDBG;
         std::cout<<"**********new cworker_thread*****************\n"<<std::endl;
-        cworker_thread* thr = new cworker_thread(&m_varmutex,&m_jobmutex,&m_idlecond);
+        cworker_thread* thr = new cworker_thread();
     _XDBG;
         appendto_idle_list(thr);
         thr->set_thread_pool(this);
@@ -68,7 +70,7 @@ cworker_thread * cthread_pool::get_idle_thread(void)
     if(m_idlelist.size()>0)
     {
         cworker_thread* thr = (cworker_thread*)m_idlelist.front();
-        printf("get idle thread %d\n",thr->get_thread_id());
+        //printf("get idle thread %d\n",thr->get_thread_id());
         m_idlemutex.unlock();
         return thr;
     }
@@ -145,7 +147,7 @@ void cthread_pool::create_idle_thread(int num)
     int i;
     for(i=0;i<num;i++)
     {
-        cworker_thread* thr = new cworker_thread(&m_varmutex,&m_jobmutex,&m_idlecond);
+        cworker_thread* thr = new cworker_thread();
         thr->set_thread_pool(this);
         appendto_idle_list(thr);
         m_varmutex.lock();
@@ -168,7 +170,7 @@ void cthread_pool::terminate_all()
 
 void cthread_pool::run(cjob* job,void* jobdata)
 {
-    std::cout<<"\ncthread_pool::run\n"<<std::endl;
+    //std::cout<<"\ncthread_pool::run\n"<<std::endl;
     assert(job != NULL);
     if(get_busy_num()==m_maxnum)
         m_maxnumcond.wait();
@@ -176,7 +178,7 @@ void cthread_pool::run(cjob* job,void* jobdata)
     if(m_idlelist.size()<m_availlow)
     {
         _XDBG;
-        std::cout<<"又要创建线程\n"<<std::endl;
+        //std::cout<<"又要创建线程\n"<<std::endl;
         if( get_all_num()+m_initnum-m_idlelist.size()<m_maxnum)
             create_idle_thread(m_initnum-m_idlelist.size());
         else
@@ -185,19 +187,20 @@ void cthread_pool::run(cjob* job,void* jobdata)
     cworker_thread* idlethr = get_idle_thread();
     if( idlethr != NULL)
     {
-        idlethr->m_work_mutex->lock();
+        idlethr->m_work_mutex.lock();
         _XDBG; 
         moveto_busy_list(idlethr);
         _XDBG; 
         idlethr->set_thread_pool(this);
         _XDBG; 
         job->set_work_thread(idlethr);
-        std::cout<<"jobisset to thread "<<idlethr->get_thread_id()<<"\n"<<std::endl;
+        //std::cout<<"jobisset to thread "<<idlethr->get_thread_id()<<"\n"<<std::endl;
         _XDBG; 
         idlethr->set_job(job,jobdata);
+        idlethr->m_work_mutex.unlock();
         _XDBG; 
     }
-    std::cout<<"\ncthread_pool::run leave now\n"<<std::endl;
+    //std::cout<<"\ncthread_pool::run leave now\n"<<std::endl;
 }
 
 
