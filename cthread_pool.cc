@@ -157,6 +157,11 @@ void cthread_pool::create_idle_thread(int num)
     }
 }
 
+void cthread_pool::kill_thread(cworker_thread* thread)
+{
+    thread->terminate();
+}
+
 void cthread_pool::terminate_all()
 {
     int i;

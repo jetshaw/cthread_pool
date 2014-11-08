@@ -20,7 +20,6 @@ cthread_manage::cthread_manage(int num)
     m_num_of_thread = num;
     m_pool = new cthread_pool(m_num_of_thread);
     _XDBG;
-    //std::cout<<"after cthread_manage::cthread_manage ...\n"<<std::endl;
 }
 
 cthread_manage::~cthread_manage()
@@ -31,7 +30,6 @@ cthread_manage::~cthread_manage()
 
 void cthread_manage::run(cjob* job,void* jobdata)
 {
-    //std::cout<<"\ncthread_manage::run\n"<<std::endl;
     _XDBG;
     m_pool->run(job,jobdata);
     _XDBG;
@@ -85,10 +83,8 @@ int main(int argc,char** argv)
 {
     int i;
     manage = new cthread_manage(10);
-    //printf(" 1: idle_nums=%d busy_nums=%d total=%d\n",manage->m_pool->m_idlelist.size(),manage->m_pool->m_busylist.size(),manage->m_pool->get_all_num());
-    for(i=0;i<1444;i++)
+    for(i=0;i<44;i++)
     {
-        //std::cout<<"\nin main for i="<<i<<std::endl;
         cxjob* job = new cxjob();
         job->set_jobno(i);
         manage->run(job,NULL);
@@ -96,7 +92,7 @@ int main(int argc,char** argv)
     sleep(2);
     cyjob* job = new cyjob();
     job->set_jobno(i);
-    manage->run(job,NULL);
+    manage->run(job,NULL );
     printf("2: idle_nums=%d busy_nums=%d total=%d\n",manage->m_pool->m_idlelist.size(),manage->m_pool->m_busylist.size(),manage->m_pool->get_all_num());
     manage->terminate_all();
     printf("3: idle_nums=%d busy_nums=%d total=%d\n",manage->m_pool->m_idlelist.size(),manage->m_pool->m_busylist.size(),manage->m_pool->get_all_num());

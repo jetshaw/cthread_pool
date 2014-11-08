@@ -25,6 +25,7 @@ class cthread_pool
         void moveto_idle_list(cworker_thread* busythread);//将一个线程移入空闲线程链表中
         void delete_idle_thread(int num);//删除一定数量的空闲线程
         void create_idle_thread(int num);//创建一定数量的空闲线程
+        void kill_thread(cworker_thread* thread);//杀列某个线程
     public:
         mutable cthread_mutex m_busymutex;//
         mutable cthread_mutex m_idlemutex;//

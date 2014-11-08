@@ -27,12 +27,8 @@ void cworker_thread::run()
     set_thread_state(THREAD_RUNNING);
     for(;;)
     {
-    _XDBG;
-        //m_work_mutex->lock();
         while(m_job == NULL )
         {
-    //std::cout<<"myself_thread="<<pthread_self()<<" m_work_mutex addr="<<&m_work_mutex<<"\n"<<std::endl;
-            //printf("%s %d to wait now\n",__func__,__LINE__);
             m_jobcond.wait();
         }
     _XDBG;

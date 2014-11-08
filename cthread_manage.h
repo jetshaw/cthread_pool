@@ -18,7 +18,6 @@ class cthread_manage
 
         void run(cjob* job,void* jobdata);//运行线程
         void terminate_all(void);//终止线程
-
 };
 
 #endif //_CTHREAD_MANAGE_H__
