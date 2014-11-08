@@ -27,9 +27,9 @@ int cthread_mutex::destroy()
 
 int cthread_mutex::lock()
 {
-    printf("pthread_ip=%lu mutex_addr=%p lock...\n",pthread_self(),&m_mutex);
+    //printf("pthread_ip=%lu mutex_addr=%p lock...\n",pthread_self(),&m_mutex);
     return pthread_mutex_lock(&m_mutex);
-    printf("pthread_ip=%lu mutex_addr=%p after ... lock...\n",pthread_self(),&m_mutex);
+    //printf("pthread_ip=%lu mutex_addr=%p after ... lock...\n",pthread_self(),&m_mutex);
 }
 
 int cthread_mutex::trylock()

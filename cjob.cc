@@ -1,9 +1,8 @@
 #include"cjob.h"
 #include<string.h>
 #include<stdlib.h>
-cjob::cjob():m_pwork_thread(NULL),m_jobno(0),m_jobname(NULL)
+cjob::cjob():m_pwork_thread(NULL),m_jobname(NULL)
 {
-    
 }
 
 cjob::~cjob()

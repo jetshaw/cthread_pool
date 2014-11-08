@@ -10,7 +10,7 @@ cworker_thread::cworker_thread():m_varmutex(),m_work_mutex(),m_jobcond(&m_work_m
     m_jobdata = NULL;
     m_thread_pool=NULL;
     m_is_end = false;
-    printf("pthread_id=%lu m_varmutex_addr=%p m_work_mutex_addr=%p\n",pthread_self(),&m_varmutex,&m_work_mutex);
+    //printf("pthread_id=%lu m_varmutex_addr=%p m_work_mutex_addr=%p\n",pthread_self(),&m_varmutex,&m_work_mutex);
 }
 
 cworker_thread::~cworker_thread()
@@ -53,7 +53,7 @@ void cworker_thread::run()
 
 void cworker_thread::set_job(cjob* job,void* jobdata)
 {
-    printf("%s %d  pthread_ip=%lu...\n",__func__,__LINE__,pthread_self());
+    //printf("%s %d  pthread_ip=%lu...\n",__func__,__LINE__,pthread_self());
     //m_varmutex.lock();
     _XDBG;
     m_job = job;

@@ -42,7 +42,7 @@ int ccondition::wait()
     _XDBG;
     //std::cout<<"pthread_self()="<<pthread_self()<<"\n"<<std::endl;
     //std::cout<<"wait::   ... ccondition::m_mutex_lock->m_mutex address="<<&m_mutex_lock->m_mutex <<"\n"<<std::endl;
-    printf("pthread_id=%lu mutex addr=%p wait...\n",pthread_self(),&m_mutex_lock->m_mutex);
+    //printf("pthread_id=%lu mutex addr=%p wait...\n",pthread_self(),&m_mutex_lock->m_mutex);
     int ret =pthread_cond_wait(&m_cond,&m_mutex_lock->m_mutex);
     _XDBG;
     /*
